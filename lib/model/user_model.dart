@@ -1,18 +1,29 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geolocator/geolocator.dart';
+
 class UserModel {
   String? uid;
   String? email;
-  String? firstName;
-  String? secondName;
+  String? name;
+  String? age;
+  String? gender;
+  String? state;
+  String? status;
+  GeoPoint? geoPoint;
 
-  UserModel({this.uid, this.email, this.firstName, this.secondName});
+  UserModel({this.uid, this.email, this.name, this.age, this.gender, this.state, this.status, this.geoPoint});
 
   // receiving data from server
   factory UserModel.fromMap(map) {
     return UserModel(
       uid: map['uid'],
       email: map['email'],
-      firstName: map['firstName'],
-      secondName: map['secondName'],
+      name: map['name'],
+      age: map['age'],
+      gender: map['gender'],
+      state: map['state'],
+      status: map['status'],
+      geoPoint: map['geoPoint']
     );
   }
 
@@ -21,8 +32,12 @@ class UserModel {
     return {
       'uid': uid,
       'email': email,
-      'firstName': firstName,
-      'secondName': secondName,
+      'name': name,
+      'age': age,
+      'gender': gender,
+      'state': state,
+      'status': status,
+      'geoPoint': geoPoint
     };
   }
 }

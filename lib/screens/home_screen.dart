@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 height: 10,
               ),
-              Text("${loggedInUser.firstName} ${loggedInUser.secondName}",
+              Text("${loggedInUser.name}, ${loggedInUser.age} years old",
                   style: TextStyle(
                     color: Colors.black54,
                     fontWeight: FontWeight.w500,
