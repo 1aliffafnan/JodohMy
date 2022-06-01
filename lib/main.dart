@@ -18,6 +18,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Email And Password Login',
       theme: ThemeData(
+
+        primarySwatch: Colors.purple,
+=======
         primarySwatch: Colors.red,
       title: 'Flutter Telo Ayamas',
       theme: ThemeData(
@@ -112,6 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
+
       ),
       debugShowCheckedModeBanner: false,
       home: LoginScreen(),
