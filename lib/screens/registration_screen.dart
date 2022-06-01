@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geolocator/geolocator.dart';
 import '../model/user_model.dart';
 import 'package:jodoh_my/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,21 +24,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   // our form key
   final _formKey = GlobalKey<FormState>();
   // editing Controller
-  final firstNameEditingController = new TextEditingController();
-  final secondNameEditingController = new TextEditingController();
-  final emailEditingController = new TextEditingController();
-  final passwordEditingController = new TextEditingController();
-  final confirmPasswordEditingController = new TextEditingController();
+  final nameController = TextEditingController();
+  final emailEditingController = TextEditingController();
+  final ageController = TextEditingController();
+  final passwordEditingController = TextEditingController();
+  final confirmPasswordEditingController = TextEditingController();
+  Position? position;
 
   @override
   Widget build(BuildContext context) {
-    //first name field
-    final firstNameField = TextFormField(
+    //name field
+    final nameField = TextFormField(
         autofocus: false,
-        controller: firstNameEditingController,
+        controller: nameController,
         keyboardType: TextInputType.name,
         validator: (value) {
-          RegExp regex = new RegExp(r'^.{3,}$');
+          RegExp regex = RegExp(r'^.{3,}$');
           if (value!.isEmpty) {
             return ("First Name cannot be Empty");
           }
@@ -47,37 +49,37 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           return null;
         },
         onSaved: (value) {
-          firstNameEditingController.text = value!;
+          nameController.text = value!;
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.account_circle),
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: "First Name",
+          hintText: "Name",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
         ));
 
-    //second name field
-    final secondNameField = TextFormField(
+    //age field
+    final ageField = TextFormField(
         autofocus: false,
-        controller: secondNameEditingController,
-        keyboardType: TextInputType.name,
+        controller: ageController,
+        keyboardType: TextInputType.number,
         validator: (value) {
           if (value!.isEmpty) {
-            return ("Second Name cannot be Empty");
+            return ("Age cannot be Empty");
           }
           return null;
         },
         onSaved: (value) {
-          secondNameEditingController.text = value!;
+          ageController.text = value!;
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
-          prefixIcon: Icon(Icons.account_circle),
+          prefixIcon: Icon(Icons.auto_awesome),
           contentPadding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: "Second Name",
+          hintText: "Age (18+)",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -100,7 +102,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           return null;
         },
         onSaved: (value) {
-          firstNameEditingController.text = value!;
+          nameController.text = value!;
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
@@ -118,7 +120,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         controller: passwordEditingController,
         obscureText: true,
         validator: (value) {
-          RegExp regex = new RegExp(r'^.{6,}$');
+          RegExp regex = RegExp(r'^.{6,}$');
           if (value!.isEmpty) {
             return ("Password is required for login");
           }
@@ -127,7 +129,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           }
         },
         onSaved: (value) {
-          firstNameEditingController.text = value!;
+          nameController.text = value!;
         },
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
@@ -173,7 +175,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
           minWidth: MediaQuery.of(context).size.width,
           onPressed: () {
-            signUp(emailEditingController.text, passwordEditingController.text);
+            print(dropdownvalue3);
+            if (dropdownvalue == 'Select Gender')
+              Fluttertoast.showToast(msg: 'Please select gender');
+            else if (dropdownvalue2 == 'Select State')
+              Fluttertoast.showToast(msg: 'Please select state');
+            else if (dropdownvalue3 == 'Select Status')
+              Fluttertoast.showToast(msg: 'Please select status');
+            else if (dropdownvalue == 'Female' && dropdownvalue3 == 'Married')
+              Fluttertoast.showToast(msg: 'Married woman can\'t use this app');
+            else if (int.parse(ageController.text) < 18)
+              Fluttertoast.showToast(msg: 'Budak-budak takleh main');
+            else
+              signUp(emailEditingController.text, passwordEditingController.text);
           },
           child: Text(
             "SignUp",
@@ -208,18 +222,136 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    SizedBox(
-                        height: 180,
-                        child: Image.asset(
-                          "assets/logo.png",
-                          fit: BoxFit.contain,
-                        )),
-                    SizedBox(height: 45),
-                    firstNameField,
-                    SizedBox(height: 20),
-                    secondNameField,
+                    Image.asset(
+                      "assets/logo.png",
+                      fit: BoxFit.contain,
+                      height: 130,
+                      width: 130,
+                    ),
                     SizedBox(height: 20),
                     emailField,
+                    SizedBox(height: 20),
+                    nameField,
+                    SizedBox(height: 20),
+                    ageField,
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+
+
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(
+                                color: Colors.grey, style: BorderStyle.solid, width: 0.80),
+                          ),
+                          child: DropdownButton(
+                            underline: SizedBox(),
+                            style: TextStyle(color: Colors.grey.shade700),
+                            value: dropdownvalue,
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                            items: gender.map((String items) {
+                              return DropdownMenuItem(
+                                enabled: items != 'Select Gender',
+                                value: items,
+                                child: Text(items),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                dropdownvalue = newValue!;
+                              });
+                            },
+                          ),
+                        ),
+
+                        SizedBox(width: 10),
+
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            border: Border.all(
+                                color: Colors.grey, style: BorderStyle.solid, width: 0.80),
+                          ),
+                          child: DropdownButton(
+                            style: TextStyle(color: Colors.grey.shade700),
+                            value: dropdownvalue3,
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                            underline: SizedBox(),
+                            items: status.map((String items) {
+                              return DropdownMenuItem(
+                                enabled: items != 'Select Status',
+                                value: items,
+                                child: Text(items),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                dropdownvalue3 = newValue!;
+                              });
+                            },
+                          ),
+                        ),
+
+
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        border: Border.all(
+                            color: Colors.grey, style: BorderStyle.solid, width: 0.80),
+                      ),
+                      child: DropdownButton(
+                        style: TextStyle(color: Colors.grey.shade700),
+                        underline: SizedBox(),
+                        value: dropdownvalue2,
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        items: state.map((String items) {
+                          return DropdownMenuItem(
+                            enabled: items != 'Select State',
+                            value: items,
+                            child: Text(items),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            dropdownvalue2 = newValue!;
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () async {
+                        position = await _determinePosition();
+                        setState(() {});
+                      },
+                      child: Text('Get Location')
+                    ),
+                    if (position != null)...[
+                      Container(
+                        padding: EdgeInsets.all(20),
+                        
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(20)
+                        ),
+                        child: Column(
+                          children: [
+                            Text('Longitude: ${position!.longitude}'),
+                            Text('Latitude: ${position!.latitude}'),
+                            Text('Altitude: ${position!.altitude}, Accuracy: ${position!.accuracy}'),
+                          ],
+                        )
+                      ),
+                      
+                    ],
                     SizedBox(height: 20),
                     passwordField,
                     SizedBox(height: 20),
@@ -235,6 +367,67 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
       ),
     );
+  }
+
+  String dropdownvalue = 'Select Gender';  
+  var gender = [   
+    'Select Gender',
+    'Male',
+    'Female'
+  ];
+
+  String dropdownvalue2 = 'Select State';  
+  var state = [   
+    'Select State',
+    'Perlis','Kedah','Penang','Perak','Selangor','N. Sembilan','Malacca','Johor','Kelantan',
+    'Terengganu','Pahang','Sabah','Sarawak','WP Kuala Lumpur','WP Labuan','WP Putrajaya', 
+  ];
+
+  String dropdownvalue3 = 'Select Status';  
+  var status = [   
+    'Select Status',
+    'Single','Married','Divorced',
+  ];
+
+  void getLocation() async {
+    
+  }
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the 
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale 
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
+    
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately. 
+      return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.');
+    } 
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    return await Geolocator.getCurrentPosition();
   }
 
   void signUp(String email, String password) async {
@@ -285,17 +478,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     UserModel userModel = UserModel();
 
-    // writing all the values
     userModel.email = user!.email;
     userModel.uid = user.uid;
-    userModel.firstName = firstNameEditingController.text;
-    userModel.secondName = secondNameEditingController.text;
+    userModel.name = nameController.text;
+    userModel.age = ageController.text;
+    userModel.gender = dropdownvalue;
+    userModel.state = dropdownvalue2;
+    userModel.status = dropdownvalue3;
+    userModel.geoPoint = GeoPoint(position!.latitude, position!.longitude);
 
     await firebaseFirestore
         .collection("users")
         .doc(user.uid)
         .set(userModel.toMap());
-    Fluttertoast.showToast(msg: "Account created successfully :) ");
+    Fluttertoast.showToast(msg: "Account created successfully!");
 
     Navigator.pushAndRemoveUntil(
         (context),
