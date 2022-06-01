@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1078192732759",
+    "project_id": "jodohmy",
+    "storage_bucket": "jodohmy.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1078192732759:android:c910200a5a55fce5ac0112",
+        "android_client_info": {
+          "package_name": "com.example.jodoh_my"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1078192732759-ttvm4a0fq8bor36s5gv6p5jbi5stbjr3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwJM6NY2h_n5towBAXLTq6jwnmKXRfLc4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1078192732759-ttvm4a0fq8bor36s5gv6p5jbi5stbjr3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
