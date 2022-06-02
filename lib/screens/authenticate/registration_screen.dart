@@ -1,12 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
-import '../model/user_model.dart';
-import 'package:jodoh_my/screens/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jodoh_my/model/user_model.dart';
-import 'package:jodoh_my/screens/home_screen.dart';
+import 'package:jodoh_my/services/auth.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
@@ -187,7 +185,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             else if (int.parse(ageController.text) < 18)
               Fluttertoast.showToast(msg: 'Budak-budak takleh main');
             else
-              signUp(emailEditingController.text, passwordEditingController.text);
+              signUp(emailEditingController.text, passwordEditingController.text, context);
           },
           child: Text(
             "SignUp",
@@ -337,7 +335,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     if (position != null)...[
                       Container(
                         padding: EdgeInsets.all(20),
-                        
                         decoration: BoxDecoration(
                           color: Colors.grey.shade200,
                           borderRadius: BorderRadius.circular(20)
@@ -389,10 +386,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     'Single','Married','Divorced',
   ];
 
-  void getLocation() async {
-    
-  }
-
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -430,15 +423,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return await Geolocator.getCurrentPosition();
   }
 
-  void signUp(String email, String password) async {
+  void signUp(String email, String password, BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       try {
         await _auth
             .createUserWithEmailAndPassword(email: email, password: password)
-            .then((value) => {postDetailsToFirestore()})
+            .then((value) async {
+              await postDetailsToFirestore();
+              User? user = value.user;
+              AuthService().userFromFirebase(user);
+              if (mounted) Navigator.pop(context);
+            })
             .catchError((e) {
-          Fluttertoast.showToast(msg: e!.message);
-        });
+              Fluttertoast.showToast(msg: e!.message);
+            });
       } on FirebaseAuthException catch (error) {
         switch (error.code) {
           case "invalid-email":
@@ -468,7 +466,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
-  postDetailsToFirestore() async {
+  Future postDetailsToFirestore() async {
     // calling our firestore
     // calling our user model
     // sedning these values
@@ -493,9 +491,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         .set(userModel.toMap());
     Fluttertoast.showToast(msg: "Account created successfully!");
 
-    Navigator.pushAndRemoveUntil(
-        (context),
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-        (route) => false);
+    // Navigator.pushAndRemoveUntil(
+    //     (context),
+    //     MaterialPageRoute(builder: (context) => BotNav()),
+    //     (route) => false);
   }
 }

@@ -1,7 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 
-class UserModel {
+class UserModelStream {
+  final String uid;
+
+  UserModelStream({required this.uid});
+}
+
+class UserModel extends ChangeNotifier {
   String? uid;
   String? email;
   String? name;

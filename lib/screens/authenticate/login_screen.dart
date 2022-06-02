@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:jodoh_my/screens/home_screen.dart';
-import 'package:jodoh_my/screens/registration_screen.dart';
+import 'package:jodoh_my/navigation/bottom.dart';
+import 'package:jodoh_my/screens/authenticate/registration_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -168,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
             .then((uid) => {
                   Fluttertoast.showToast(msg: "Login Successful"),
                   Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => HomeScreen())),
+                      MaterialPageRoute(builder: (context) => BotNav())),
                 });
       } on FirebaseAuthException catch (error) {
         switch (error.code) {
