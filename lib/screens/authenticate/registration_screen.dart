@@ -125,6 +125,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           if (!regex.hasMatch(value)) {
             return ("Enter Valid Password(Min. 6 Character)");
           }
+          return null;
         },
         onSaved: (value) {
           nameController.text = value!;
@@ -183,9 +184,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             else if (dropdownvalue == 'Female' && dropdownvalue3 == 'Married')
               Fluttertoast.showToast(msg: 'Married woman can\'t use this app');
             else if (int.parse(ageController.text) < 18)
-              Fluttertoast.showToast(msg: 'Budak-budak takleh main');
+              Fluttertoast.showToast(msg: 'Underage can\'t use this app (18+)');
+            else if (position == null)
+              Fluttertoast.showToast(msg: 'Require location');
             else
-              signUp(emailEditingController.text, passwordEditingController.text, context);
+              signUp(emailEditingController.text,
+                  passwordEditingController.text, context);
           },
           child: Text(
             "SignUp",
@@ -236,14 +240,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-
-
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 10.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             border: Border.all(
-                                color: Colors.grey, style: BorderStyle.solid, width: 0.80),
+                                color: Colors.grey,
+                                style: BorderStyle.solid,
+                                width: 0.80),
                           ),
                           child: DropdownButton(
                             underline: SizedBox(),
@@ -264,15 +268,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             },
                           ),
                         ),
-
                         SizedBox(width: 10),
-
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: 10.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             border: Border.all(
-                                color: Colors.grey, style: BorderStyle.solid, width: 0.80),
+                                color: Colors.grey,
+                                style: BorderStyle.solid,
+                                width: 0.80),
                           ),
                           child: DropdownButton(
                             style: TextStyle(color: Colors.grey.shade700),
@@ -293,8 +297,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             },
                           ),
                         ),
-
-
                       ],
                     ),
                     SizedBox(height: 20),
@@ -303,7 +305,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
                         border: Border.all(
-                            color: Colors.grey, style: BorderStyle.solid, width: 0.80),
+                            color: Colors.grey,
+                            style: BorderStyle.solid,
+                            width: 0.80),
                       ),
                       child: DropdownButton(
                         style: TextStyle(color: Colors.grey.shade700),
@@ -326,28 +330,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                     SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () async {
-                        position = await _determinePosition();
-                        setState(() {});
-                      },
-                      child: Text('Get Location')
-                    ),
-                    if (position != null)...[
+                        onPressed: () async {
+                          position = await _determinePosition();
+                          setState(() {});
+                        },
+                        child: Text('Get Location')),
+                    if (position != null) ...[
                       Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(20)
-                        ),
-                        child: Column(
-                          children: [
-                            Text('Longitude: ${position!.longitude}'),
-                            Text('Latitude: ${position!.latitude}'),
-                            Text('Altitude: ${position!.altitude}, Accuracy: ${position!.accuracy}'),
-                          ],
-                        )
-                      ),
-                      
+                          padding: EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Column(
+                            children: [
+                              Text('Longitude: ${position!.longitude}'),
+                              Text('Latitude: ${position!.latitude}'),
+                              Text(
+                                  'Altitude: ${position!.altitude}, Accuracy: ${position!.accuracy}'),
+                            ],
+                          )),
                     ],
                     SizedBox(height: 20),
                     passwordField,
@@ -366,24 +367,36 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  String dropdownvalue = 'Select Gender';  
-  var gender = [   
-    'Select Gender',
-    'Male',
-    'Female'
-  ];
+  String dropdownvalue = 'Select Gender';
+  var gender = ['Select Gender', 'Male', 'Female'];
 
-  String dropdownvalue2 = 'Select State';  
-  var state = [   
+  String dropdownvalue2 = 'Select State';
+  var state = [
     'Select State',
-    'Perlis','Kedah','Penang','Perak','Selangor','N. Sembilan','Malacca','Johor','Kelantan',
-    'Terengganu','Pahang','Sabah','Sarawak','WP Kuala Lumpur','WP Labuan','WP Putrajaya', 
+    'Perlis',
+    'Kedah',
+    'Penang',
+    'Perak',
+    'Selangor',
+    'N. Sembilan',
+    'Malacca',
+    'Johor',
+    'Kelantan',
+    'Terengganu',
+    'Pahang',
+    'Sabah',
+    'Sarawak',
+    'WP Kuala Lumpur',
+    'WP Labuan',
+    'WP Putrajaya',
   ];
 
-  String dropdownvalue3 = 'Select Status';  
-  var status = [   
+  String dropdownvalue3 = 'Select Status';
+  var status = [
     'Select Status',
-    'Single','Married','Divorced',
+    'Single',
+    'Married',
+    'Divorced',
   ];
 
   Future<Position> _determinePosition() async {
@@ -394,7 +407,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       // Location services are not enabled don't continue
-      // accessing the position and request users of the 
+      // accessing the position and request users of the
       // App to enable the location services.
       return Future.error('Location services are disabled.');
     }
@@ -405,18 +418,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       if (permission == LocationPermission.denied) {
         // Permissions are denied, next time you could try
         // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale 
+        // Android's shouldShowRequestPermissionRationale
         // returned true. According to Android guidelines
         // your App should show an explanatory UI now.
         return Future.error('Location permissions are denied');
       }
     }
-    
+
     if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately. 
+      // Permissions are denied forever, handle appropriately.
       return Future.error(
-        'Location permissions are permanently denied, we cannot request permissions.');
-    } 
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
 
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
@@ -429,14 +442,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         await _auth
             .createUserWithEmailAndPassword(email: email, password: password)
             .then((value) async {
-              await postDetailsToFirestore();
-              User? user = value.user;
-              AuthService().userFromFirebase(user);
-              if (mounted) Navigator.pop(context);
-            })
-            .catchError((e) {
-              Fluttertoast.showToast(msg: e!.message);
-            });
+          await postDetailsToFirestore();
+          User? user = value.user;
+          AuthService().userFromFirebase(user);
+          if (mounted) Navigator.pop(context);
+        }).catchError((e) {
+          Fluttertoast.showToast(msg: e!.message);
+        });
       } on FirebaseAuthException catch (error) {
         switch (error.code) {
           case "invalid-email":

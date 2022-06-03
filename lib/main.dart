@@ -20,17 +20,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        StreamProvider<UserModelStream?>.value(initialData: null, value: AuthService().user),
-        ChangeNotifierProvider<UserModel>.value(value: UserModel())
-      ],
-      child: MaterialApp(
-        theme: ThemeData(
-          primarySwatch: Colors.purple,
-        ),
-        debugShowCheckedModeBanner: false,
-        home: Wrapper(),
-      )
-    );
+        providers: [
+          StreamProvider.value(initialData: null, value: AuthService().user),
+          ChangeNotifierProvider<UserModel>.value(value: UserModel())
+        ],
+        child: MaterialApp(
+          theme: ThemeData(
+            primarySwatch: Colors.purple,
+          ),
+          debugShowCheckedModeBanner: false,
+          home: Wrapper(),
+        ));
   }
 }
