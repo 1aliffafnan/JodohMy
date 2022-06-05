@@ -18,13 +18,13 @@ Future<void> main() async {
     // Android only
     statusBarIconBrightness: Brightness.dark,
     
-    // BOTTOM NAVIGATION
-    systemNavigationBarColor: Colors.transparent,
-    // systemNavigationBarDividerColor: Colors.transparent, // DON'T USE THIS (CAUSING statusBarText can't change)
-    systemNavigationBarIconBrightness: Brightness.dark,
-    systemNavigationBarContrastEnforced: false
+    // // BOTTOM NAVIGATION
+    // systemNavigationBarColor: Colors.transparent,
+    // // systemNavigationBarDividerColor: Colors.transparent, // DON'T USE THIS (CAUSING statusBarText can't change)
+    // systemNavigationBarIconBrightness: Brightness.dark,
+    // systemNavigationBarContrastEnforced: false
   ));
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: [SystemUiOverlay.top]);
+  //SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: [SystemUiOverlay.top]);
 
   await Firebase.initializeApp();
 

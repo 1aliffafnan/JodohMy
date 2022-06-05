@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jodoh_my/model/user_model.dart';
+import 'package:jodoh_my/screens/authenticate/login_screen.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -25,6 +26,14 @@ class _ProfileState extends State<Profile> {
   //   usermodel = UserModel.fromMap(data.data());
   //   yield usermodel;
   // }
+
+  Future<void> logout(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    if (mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => LoginScreen()));
+    }
+  }
 
   Future<UserModel> getUserModel2() async {
     UserModel usermodel;
@@ -102,7 +111,21 @@ class _ProfileState extends State<Profile> {
                         width: double.infinity,
                         child: Column(
                           children: [
-                            SizedBox(height: 80),
+                            SizedBox(height: 40),
+                            Container(
+                              margin: EdgeInsets.only(right: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () { 
+                                      logout(context);
+                                    },
+                                    child: Text('Sign Out')
+                                  )
+                                ],
+                              ),
+                            ),
                             GestureDetector(
                               onTap: () {
                                 selectFile();

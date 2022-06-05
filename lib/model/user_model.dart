@@ -20,6 +20,9 @@ class UserModel extends ChangeNotifier {
   String? gender;
   String? state;
   String? status;
+  List? pending;
+  List? upcoming;
+  List? follower;
   GeoPoint? geoPoint;
 
   UserModel(
@@ -28,6 +31,9 @@ class UserModel extends ChangeNotifier {
       this.interest1,
       this.interest2,
       this.interest3,
+      this.pending,
+      this.upcoming,
+      this.follower,
       this.bio,
       this.email,
       this.name,
@@ -46,6 +52,9 @@ class UserModel extends ChangeNotifier {
         interest1: map['interest1'],
         interest2: map['interest2'],
         interest3: map['interest3'],
+        upcoming: map['upcoming'],
+        pending: map['pending'],
+        follower: map['follower'],
         email: map['email'],
         name: map['name'],
         age: map['age'],
@@ -61,6 +70,12 @@ class UserModel extends ChangeNotifier {
       'uid': uid,
       'pic': pic,
       'bio': bio,
+      'interest1': interest1,
+      'interest2': interest2,
+      'interest3': interest3,
+      'pending': pending,
+      'upcoming': upcoming,
+      'follower': follower,
       'email': email,
       'name': name,
       'age': age,
