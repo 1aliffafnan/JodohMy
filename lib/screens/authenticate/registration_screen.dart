@@ -1,4 +1,9 @@
+
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +20,7 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _auth = FirebaseAuth.instance;
+ 
 
   // string for displaying the error Message
   String? errorMessage;
@@ -28,6 +34,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final passwordEditingController = TextEditingController();
   final confirmPasswordEditingController = TextEditingController();
   Position? position;
+
+  PlatformFile? pickedFile;
+  UploadTask? uploadTask;
+  Future selectFile() async {
+    final result = await FilePicker.platform.pickFiles();
+    if (result == null) return;
+
+    setState(() {
+      pickedFile = result.files.first;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -212,10 +229,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           },
         ),
       ),
-      body: Center(
-        child: SingleChildScrollView(
+      body: Center(   
+          child: SingleChildScrollView(
           child: Container(
-            color: Colors.white,
+
             child: Padding(
               padding: const EdgeInsets.all(36.0),
               child: Form(
@@ -229,6 +246,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       fit: BoxFit.contain,
                       height: 130,
                       width: 130,
+                    ),
+                    if (pickedFile != null)...[
+                      Text(pickedFile!.name),
+                      Image.file(
+                        File(pickedFile!.path!),
+                        width: double.infinity,
+                        fit: BoxFit.cover
+                      )
+                    ],
+                    ElevatedButton(
+                      onPressed: selectFile,
+                      child: Text("Select Image", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),
                     ),
                     SizedBox(height: 20),
                     emailField,
@@ -399,6 +428,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     'Divorced',
   ];
 
+
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -439,6 +469,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   void signUp(String email, String password, BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       try {
+        
         await _auth
             .createUserWithEmailAndPassword(email: email, password: password)
             .then((value) async {
@@ -488,6 +519,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     UserModel userModel = UserModel();
 
+    final path = 'user/${pickedFile!.name}';
+    final file = File(pickedFile!.path!);
+
+    final ref = FirebaseStorage.instance.ref().child(path);
+    uploadTask = ref.putFile(file);
+    final snapshot = await uploadTask!.whenComplete(() {});
+
+    final urlDownload = await snapshot.ref.getDownloadURL();
+
     userModel.email = user!.email;
     userModel.uid = user.uid;
     userModel.name = nameController.text;
@@ -495,6 +535,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     userModel.gender = dropdownvalue;
     userModel.state = dropdownvalue2;
     userModel.status = dropdownvalue3;
+    userModel.pic = urlDownload;
     userModel.geoPoint = GeoPoint(position!.latitude, position!.longitude);
 
     await firebaseFirestore

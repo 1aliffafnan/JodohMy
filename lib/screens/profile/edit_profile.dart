@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:jodoh_my/model/user_model.dart';
 
 class EditProfile extends StatefulWidget {
-  final String name;
-  const EditProfile({Key? key, required this.name}) : super(key: key);
+  final UserModel userModel;
+  const EditProfile({Key? key, required this.userModel}) : super(key: key);
 
   @override
   State<EditProfile> createState() => _EditProfileState();
@@ -12,10 +13,15 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Edit Boss'),
-      ),
-      body: Text(widget.name),
-    );
+        appBar: AppBar(
+          title: Text('Edit Boss'),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: const [
+              
+            ],
+          ),
+        ),);
   }
 }
