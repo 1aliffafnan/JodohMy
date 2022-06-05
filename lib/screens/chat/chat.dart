@@ -14,6 +14,7 @@ class _ChatState extends State<Chat> {
       appBar: AppBar(
         title: Center(child: Text('Chats')),
       ),
+      
     );
   }
 }
