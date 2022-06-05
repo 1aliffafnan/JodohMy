@@ -1,6 +1,6 @@
 # jodoh_my
 
-A new Flutter project.
+A dating app for Malaysianns
 
 ## Getting Started
 
