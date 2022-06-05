@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:jodoh_my/model/user_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,23 @@ import 'services/auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    // STATUS BAR
+    statusBarColor: Colors.transparent,
+    systemStatusBarContrastEnforced: false,
+    // iOS only
+    statusBarBrightness: Brightness.dark,
+    // Android only
+    statusBarIconBrightness: Brightness.dark,
+    
+    // BOTTOM NAVIGATION
+    systemNavigationBarColor: Colors.transparent,
+    // systemNavigationBarDividerColor: Colors.transparent, // DON'T USE THIS (CAUSING statusBarText can't change)
+    systemNavigationBarIconBrightness: Brightness.dark,
+    systemNavigationBarContrastEnforced: false
+  ));
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: [SystemUiOverlay.top]);
+
   await Firebase.initializeApp();
 
   runApp(MyApp());
