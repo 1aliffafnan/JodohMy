@@ -141,6 +141,7 @@ class _ProfileState extends State<Profile> {
                         ),
                       ),
                     ),
+                    SizedBox(height: 20),
                     Text(name ?? 'You dont have name',
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold)),

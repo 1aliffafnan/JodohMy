@@ -1,5 +1,22 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+
+class ChatModel {
+  final uid;
+  final String key;
+  final String text;
+  final String datetime;
+
+  ChatModel({
+    required this.uid,
+    required this.key,
+    required this.text,
+    required this.datetime,
+  });
+}
 
 class UserModelStream {
   final String uid;
@@ -85,4 +102,16 @@ class UserModel extends ChangeNotifier {
       'geoPoint': geoPoint
     };
   }
+}
+
+Future<UserModel> getUserModel() async {
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel usermodel;
+  final data = await FirebaseFirestore.instance
+      .collection("users")
+      .doc(user!.uid)
+      .get();
+  usermodel = UserModel.fromMap(data.data());
+
+  return usermodel;
 }

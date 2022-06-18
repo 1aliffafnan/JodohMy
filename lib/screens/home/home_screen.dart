@@ -12,19 +12,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   User? user = FirebaseAuth.instance.currentUser;
-
-  Future<UserModel> getUserModel() async {
-    UserModel usermodel;
-    final data = await FirebaseFirestore.instance
-        .collection("users")
-        .doc(user!.uid)
-        .get();
-    usermodel = UserModel.fromMap(data.data());
-
-    return usermodel;
-  }
-
 
   // Display users
   Future<List<BoxContainer>> getData() async {
@@ -285,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
               future: getData(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting)
-                  return CircularProgressIndicator();
+                  return LinearProgressIndicator();
                 if (!snapshot.hasData || snapshot.data == null)
                   return Text('No data');
                   
@@ -379,11 +368,11 @@ class _BoxContainerState extends State<BoxContainer> {
     }
     else if (widget.status == 'upcoming') {
       status = 'upcoming';
-      icon = Icon(Icons.pending, color: Colors.yellow);
+      icon = Icon(Icons.hourglass_bottom, color: Colors.blue);
     }
     else if (widget.status == 'follower') {
       status = 'follower';
-      icon = Icon(Icons.done_outline);
+      icon = Icon(Icons.check_circle);
     }
   }
 
@@ -536,7 +525,7 @@ class _BoxContainerState extends State<BoxContainer> {
                               }
                               else if (status == 'upcoming') {
                                 status = 'follower';
-                                icon = Icon(Icons.done_outline);
+                                icon = Icon(Icons.check_circle);
                               }
                               else if (status == 'follower') {
                                 status = 'none';
