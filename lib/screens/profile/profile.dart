@@ -91,10 +91,11 @@ class _ProfileState extends State<Profile> {
             String? state = data['state'];
             String? age = data['age'];
             String? pic = data['pic'];
-            String? biodata = data['biodata'];
+            String? biodata = data['bio'];
             String? interest1 = data['interest1'];
             String? interest2 = data['interest2'];
             String? interest3 = data['interest3'];
+            GeoPoint? geoPoint = data['geoPoint'];
             return Scaffold(
               body: SingleChildScrollView(
                 child: Column(
@@ -146,7 +147,10 @@ class _ProfileState extends State<Profile> {
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold)),
                     Text("$age years old"),
-                    Text(state ?? 'Your gay'),
+                    Text(state ?? ''),
+                    SizedBox(height: 20),
+                    Text('Latitude : ${geoPoint!.latitude}'),
+                    Text('Longitude : ${geoPoint.longitude}'),
                     SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -298,7 +302,7 @@ class _ChangeBioState extends State<ChangeBio> {
                 FirebaseFirestore.instance
                     .collection("users")
                     .doc(user!.uid)
-                    .update({'biodata': bioController.text});
+                    .update({'bio': bioController.text});
               },
               child: Text('Save')
             )
