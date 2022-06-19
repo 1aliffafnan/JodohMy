@@ -44,8 +44,9 @@ class MyApp extends StatelessWidget {
         ],
         child: MaterialApp(
           theme: ThemeData(
-            primarySwatch: Colors.purple,
+            primarySwatch: Colors.purple
           ),
+          scrollBehavior: const ScrollBehavior().copyWith(overscroll: false),
           debugShowCheckedModeBanner: false,
           home: Wrapper(),
         ));
