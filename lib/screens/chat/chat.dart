@@ -43,11 +43,11 @@ class _ChatState extends State<Chat> {
     return Scaffold(
       appBar: AppBar(
         title: Center(child: Text('Chats')),
-        actions: [
-          ElevatedButton(onPressed: () {
-            database.child('messages').set(null);
-          }, child: Text('Delete all messages'))
-        ],
+        // actions: [
+        //   ElevatedButton(onPressed: () {
+        //     database.child('messages').set(null);
+        //   }, child: Text('Delete all messages'))
+        // ],
       ),
       body: FutureBuilder<List<UserModel>>(
         future: getFriendlist(),

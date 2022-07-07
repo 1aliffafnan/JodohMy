@@ -94,83 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
           uid: uid!,
           userId: user!.uid,
           onTapLike: () {
-
-            // // ========== Follower ============
-            // if (status == 'upcoming') {
-            //   listFollowerThem.add(user!.uid);
-            //   listFollowerMe.add(uid);
-
-            //   listPendingThem.removeWhere((e) => e == user!.uid);
-            //   listUpcomingMe.removeWhere((e) => e == uid);
-            //   // Them
-            //   FirebaseFirestore.instance
-            //     .collection("users")
-            //     .doc(uid)
-            //     .update({
-            //       'follower': listFollowerThem,
-            //       'pending': listPendingThem
-            //   });
-            //   // Me
-            //   FirebaseFirestore.instance
-            //     .collection("users")
-            //     .doc(user!.uid)
-            //     .update({
-            //       'follower': listFollowerMe,
-            //       'upcoming': listUpcomingMe
-            //   });
-            // }
-
-            // else if (status == 'follower') {
-            //   listFollowerThem.removeWhere((e) => e == user!.uid);
-            //   listFollowerMe.removeWhere((e) => e == uid);
-            //   // Them
-            //   FirebaseFirestore.instance
-            //     .collection("users")
-            //     .doc(uid)
-            //     .update({
-            //       'follower': listFollowerThem
-            //   });
-            //   // Me
-            //   FirebaseFirestore.instance
-            //     .collection("users")
-            //     .doc(user!.uid)
-            //     .update({
-            //       'follower': listFollowerMe
-            //   });
-            // }
             
-            // // =================================
-            
-            // else {
-            //   // Me
-            //   if (listPendingMe.contains(uid)) {
-            //     listPendingMe.removeWhere((e) => e == uid);
-            //   } else {
-            //     listPendingMe.add(uid!);
-            //   }
-            //   FirebaseFirestore.instance
-            //     .collection("users")
-            //     .doc(user!.uid)
-            //     .update({
-            //       'pending': listPendingMe
-            //   });
-
-            //   // Them
-            //   if (listUpcomingThem.contains(user!.uid)) {
-            //     listUpcomingThem.removeWhere((e) => e == user!.uid);
-            //   } else {
-            //     listUpcomingThem.add(user!.uid);
-            //   }
-            //   FirebaseFirestore.instance
-            //     .collection("users")
-            //     .doc(uid)
-            //     .update({
-            //       'upcoming': listUpcomingThem
-            //   });
-            // }
-
-            
-
           },
           name: name ?? 'No name',
           imageUrl: pic ?? 'No pic',
@@ -197,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //logout
   Future<void> logout(BuildContext context) async {
     User? user = FirebaseAuth.instance.currentUser;
-    await FirebaseFirestore.instance.collection("users").doc(user!.uid).set({'fcm': null});
+    await FirebaseFirestore.instance.collection("users").doc(user!.uid).update({'fcm': null});
     await FirebaseAuth.instance.signOut();
     if (mounted) {
       Navigator.of(context).pushReplacement(
@@ -309,37 +233,74 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Text('Find Partner',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
           SizedBox(height: 5),
-          SizedBox(
-            height: 400,
-            child: FutureBuilder<List<BoxContainer>>(
-              future: getData(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting)
-                  return ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      return BoxPlaceholder();
-                  }
-                );
-                if (!snapshot.hasData || snapshot.data == null)
-                  return Text('No data');
-                  
-                final List<BoxContainer>? listContainer = snapshot.data;
+          FutureBuilder<List<BoxContainer>>(
+            future: getData(),
+            builder: (context, snapshot) {
+              // if (snapshot.connectionState == ConnectionState.waiting)
+              //   return ListView.builder(
+              //     shrinkWrap: true,
+              //     scrollDirection: Axis.horizontal,
+              //     itemCount: 5,
+              //     itemBuilder: (context, index) {
+              //       return BoxPlaceholder();
+              //   }
+              // );
+              if (!snapshot.hasData || snapshot.data == null || snapshot.connectionState == ConnectionState.waiting)
+                return Container();
+                
+              final List<BoxContainer> listContainer = snapshot.data!;
+              final List<BoxContainer> newList = [];
 
-                return ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: listContainer!.length,
-                  itemBuilder: (context, index) {
-                    if (index == listContainer.length - 1) return Container(margin: EdgeInsets.only(right: 20), child: listContainer[index]);
-                    return listContainer[index];
-                  }
-                );
-
+              for (var e in listContainer) {
+                if (e.state!.substring(5) == userModelAll.state) {
+                  newList.add(e);
+                }
               }
-            ),
-          )
-        ],
+
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 400,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: listContainer.length,
+                      itemBuilder: (context, index) {
+                        if (index == listContainer.length - 1) return Container(margin: EdgeInsets.only(right: 20), child: listContainer[index]);
+                        return listContainer[index];
+                      }
+                    ),
+                  ),
+
+                  SizedBox(height: 20),
+
+                  Container(
+                  margin: EdgeInsets.only(left: 20),
+                  child: Text('Near ${userModelAll.state}',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+
+                  SizedBox(height: 5),
+                  SizedBox(
+                    height: 400,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: newList.length,
+                      itemBuilder: (context, index) {
+                        if (index == newList.length - 1) return Container(margin: EdgeInsets.only(right: 20), child: newList[index]);
+                        return newList[index];
+                      }
+                    ),
+                  ),
+                ],
+              );
+
+            }
+          ),
+          
+        ]
       ),
     );
   }
