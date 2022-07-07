@@ -28,6 +28,8 @@ class _ProfileState extends State<Profile> {
   // }
 
   Future<void> logout(BuildContext context) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    await FirebaseFirestore.instance.collection("users").doc(user!.uid).set({'fcm': null});
     await FirebaseAuth.instance.signOut();
     if (mounted) {
       Navigator.of(context).pushReplacement(

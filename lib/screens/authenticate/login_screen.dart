@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jodoh_my/navigation/bottom.dart';
@@ -165,10 +167,12 @@ class _LoginScreenState extends State<LoginScreen> {
       try {
         await _auth
             .signInWithEmailAndPassword(email: email, password: password)
-            .then((uid) => {
-                  Fluttertoast.showToast(msg: "Login Successful"),
-                  Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => BotNav())),
+            .then((uid) async {
+                  Fluttertoast.showToast(msg: "Login Successful");
+                  await FirebaseFirestore.instance.collection("users").doc(uid.user!.uid).update({'fcm': await FirebaseMessaging.instance.getToken()});
+                  if (mounted) {
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => BotNav()));
+                  }
                 });
       } on FirebaseAuthException catch (error) {
         switch (error.code) {

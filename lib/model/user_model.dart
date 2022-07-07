@@ -37,6 +37,7 @@ class UserModel extends ChangeNotifier {
   String? gender;
   String? state;
   String? status;
+  String? fcm;
   List? pending;
   List? upcoming;
   List? follower;
@@ -48,6 +49,7 @@ class UserModel extends ChangeNotifier {
       this.interest1,
       this.interest2,
       this.interest3,
+      this.fcm,
       this.pending,
       this.upcoming,
       this.follower,
@@ -69,6 +71,7 @@ class UserModel extends ChangeNotifier {
         interest1: map['interest1'],
         interest2: map['interest2'],
         interest3: map['interest3'],
+        fcm: map['fcm'],
         upcoming: map['upcoming'],
         pending: map['pending'],
         follower: map['follower'],
@@ -94,6 +97,7 @@ class UserModel extends ChangeNotifier {
       'upcoming': upcoming,
       'follower': follower,
       'email': email,
+      'fcm': fcm,
       'name': name,
       'age': age,
       'gender': gender,

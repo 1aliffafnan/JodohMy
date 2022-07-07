@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,6 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:jodoh_my/model/user_model.dart';
 import 'package:jodoh_my/screens/chat/constant.dart';
 import 'package:jodoh_my/screens/profile/profile_other.dart';
+import 'package:http/http.dart' as http;
 
 class ChatRoom extends StatefulWidget {
   final UserModel userModel;
@@ -445,6 +448,7 @@ class _ChatRoomState extends State<ChatRoom> {
                       if (message != '') {
                         _controller.clear();
                         chatList = [];
+                        if (widget.friendModel.fcm != null) sendPushMessage(message, widget.userModel.name!, widget.friendModel.fcm!);
                         await addMessage();
                         await getChatRoom();
                         message = '';
@@ -459,5 +463,36 @@ class _ChatRoomState extends State<ChatRoom> {
         ],
       ),
     );
+  }
+
+  void sendPushMessage(String body, String title, String token) async {
+    try {
+      await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'key=AAAA-wlLelc:APA91bHS9wpwK9GtWqAoJi-NklHpb67YGUMxL3BfU48exMpGhGFlGqDNwUE7N7PquRWs8qBarAsHvj4jBz3eNzJwKtIWjCTXn_vaTWkHPp2HFHDsr5qTf-KWG-EZzsI9F8ADtYVoVYBv',
+        },
+        body: jsonEncode(
+          <String, dynamic>{
+            'notification': <String, dynamic>{
+              'body': body,
+              'title': title,
+              'image': widget.userModel.pic
+            },
+            'priority': 'high',
+            'data': <String, dynamic>{
+              'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+              'id': '1',
+              'status': 'done'
+            },
+            "to": token,
+          },
+        ),
+      );
+      print('done');
+    } catch (e) {
+      print("error push notification");
+    }
   }
 }
